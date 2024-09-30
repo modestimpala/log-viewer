@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+        h1, h2 { color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        th { background-color: #4CAF50; color: white; }
+        .back-link { display: inline-block; margin-bottom: 20px; }
+        .search-form { margin-bottom: 20px; }
+        .search-form input[type="text"] { padding: 5px; width: 300px; }
+        .search-form input[type="submit"] { padding: 5px 10px; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-link">&larr; Back to file list</a>
+    <h1>Search Results</h1>
+
+    <form class="search-form" action="/search" method="GET">
+        <input type="text" name="q" value="<%= query %>" placeholder="Search logs...">
+        <input type="submit" value="Search">
+    </form>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+        <p class="error"><%= error %></p>
+    <% } else if (query) { %>
+        <p>Results for: "<%= query %>"</p>
+
+        <% if (results.length === 0) { %>
+            <p>No results found.</p>
+        <% } else { %>
+            <% results.forEach(result => { %>
+                <h2>File: <%= result.filename %></h2>
+                <table>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Level</th>
+                        <th>IP</th>
+                        <th>Username</th>
+                        <th>Message</th>
+                    </tr>
+                    <% result.logs.forEach(log => { %>
+                        <tr>
+                            <td><%= log.timestamp %></td>
+                            <td><%= log.level %></td>
+                            <td><%= log.ip || '' %></td>
+                            <td><%= log.username || '' %></td>
+                            <td><%= log.message %></td>
+                        </tr>
+                    <% }); %>
+                </table>
+            <% }); %>
+        <% } %>
+    <% } %>
+</body>
+</html>
