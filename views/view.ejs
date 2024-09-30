@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Log: <%= filename %></title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+        h1 { color: #333; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        th { background-color: #4CAF50; color: white; }
+        .clickable { cursor: pointer; color: blue; text-decoration: underline; }
+        .filter-info { margin-bottom: 20px; }
+        .back-link { display: inline-block; margin-bottom: 20px; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-link">&larr; Back to file list</a>
+    <h1>Log File: <%= filename %></h1>
+    
+    <% if (typeof error !== 'undefined' && error !== null) { %>
+        <p class="error"><%= error %></p>
+    <% } else { %>
+        <% if (filter && filterType) { %>
+            <div class="filter-info">
+                <p>Filtered by <%= filterType %>: <%= filter %> | <a href="/view/<%= filename %>">Clear filter</a></p>
+            </div>
+        <% } %>
+        
+        <% if (logs.length === 0) { %>
+            <p>No log entries found.</p>
+        <% } else { %>
+            <table>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Level</th>
+                    <th>IP</th>
+                    <th>Username</th>
+                    <th>Message</th>
+                </tr>
+                <% logs.forEach(log => { %>
+                    <tr>
+                        <td><%= log.timestamp %></td>
+                        <td><%= log.level %></td>
+                        <td>
+                            <% if (log.ip) { %>
+                                <span class="clickable" onclick="filterBy('ip', '<%= log.ip %>')"><%= log.ip %></span>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (log.username) { %>
+                                <span class="clickable" onclick="filterBy('username', '<%= log.username %>')"><%= log.username %></span>
+                            <% } %>
+                        </td>
+                        <td><%= log.message %></td>
+                    </tr>
+                <% }); %>
+            </table>
+        <% } %>
+        
+        <script>
+            function filterBy(type, value) {
+                window.location.href = `/view/<%= filename %>?filterType=${type}&filter=${value}`;
+            }
+        </script>
+    <% } %>
+</body>
+</html>
